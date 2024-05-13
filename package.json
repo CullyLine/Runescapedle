@@ -1,0 +1,18 @@
+{
+  "devDependencies": {
+    "electron": "^30.0.3",
+    "typescript": "^5.4.5"
+  },
+  "name": "electron-test",
+  "version": "1.0.0",
+  "description": "DJ Electron Test",
+  "main": "Main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "DJ",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^5.3.3"
+  }
+}

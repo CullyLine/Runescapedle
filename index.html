@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" 
+      content="base-uri 'self';
+      default-src 'self';
+      connect-src * ws: http: https: 'self';
+      img-src data: https:;
+      object-src 'none';
+      script-src 'self' 'unsafe-inline';
+      style-src 'self' 'unsafe-inline';
+      upgrade-insecure-requests;">
+    <!-- content="default-src 'self'; script-src 'self'"> -->
     <title>Hello World!</title>
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Load the index.js file -->
+    <script src="index.js"></script>
   </head>
   <body>
     <section class="jumbotron text-center pt-5 pb-5"> 

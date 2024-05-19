@@ -1,4 +1,11 @@
-//let itemInput = document.getElementById('itemInput');
+// Hint variables
+// Members only, true or false
+// High alch value, higher lower or equal
+// General store value
+// Weight, higher lower or equal
+// List of item categories
+// GE Buy_Limit
+// Item ID
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,6 +42,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var currentItem = "";
 // Fetch JSON list of all OSRS items.
 function fetchItemList() {
     return __awaiter(this, void 0, void 0, function () {
@@ -96,26 +104,47 @@ function fetchItemList() {
                         itemDataDictionary["High_Alchemy_value"] = -1;
                     }
                     console.log(itemDataDictionary);
+                    currentItem = item;
                     return [2 /*return*/];
             }
         });
     });
 }
+function playerGuess() {
+    // Get the player's guess
+    var guessInput = document.getElementById("itemInput");
+    if (guessInput == null) {
+        console.log("Guess input not found");
+        return;
+    }
+    var guess = guessInput.value;
+    console.log(guess);
+    // Compare the two
+    if (guess == currentItem) {
+        console.log("Correct!");
+    }
+    else {
+        console.log("Incorrect!");
+    }
+}
 function setup() {
     console.log("Setting up...");
     // Fetch data from the OSRS Wiki
     fetchItemList();
+    // Bind itemInput event to listen for the enter key
+    var itemInput = document.getElementById('itemInput');
+    if (itemInput != null) {
+        itemInput.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                console.log("Enter key pressed");
+                playerGuess();
+            }
+        });
+    }
 }
-setup();
-// Bind itemInput event to listen for the enter key
-// if (itemInput != null) {
-//     itemInput.addEventListener("keyup", function(event) {
-//         if (event.key === "Enter") {
-//             // Cancel the default action, if needed
-//             event.preventDefault();
-//             // Trigger the button element with a click
-//             //document.getElementById("itemButton").click();
-//             console.log("Enter key pressed");
-//         }
-//     });
-// }
+window.onload = function () {
+    console.log("Window loaded");
+    setup();
+};

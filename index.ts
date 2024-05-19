@@ -1,4 +1,13 @@
-//let itemInput = document.getElementById('itemInput');
+// Hint variables
+// Members only, true or false
+// High alch value, higher lower or equal
+// General store value
+// Weight, higher lower or equal
+// List of item categories
+// GE Buy_Limit
+// Item ID
+
+let currentItem : string = "";
 
 // Fetch JSON list of all OSRS items.
 async function fetchItemList() {
@@ -63,26 +72,55 @@ async function fetchItemList() {
     }
 
     console.log(itemDataDictionary);
+
+    currentItem = item;
+}
+
+function incorrectGuess() {
+    
+}
+
+function playerGuess() {
+    // Get the player's guess
+    let guessInput : HTMLInputElement = <HTMLInputElement>document.getElementById("itemInput");
+    if (guessInput == null) {
+        console.log("Guess input not found");
+        return;
+    }
+    let guess = guessInput.value;
+
+    // Compare the two
+    if (guess == currentItem) {
+        console.log("Correct!");
+    }
+    else {
+        console.log("Incorrect!");
+        incorrectGuess();
+    }
+
 }
 
 function setup() {
-    console.log("Setting up...");
-    
     // Fetch data from the OSRS Wiki
     fetchItemList()
+
+    // Bind itemInput event to listen for the enter key
+    let itemInput = document.getElementById('itemInput');
+    if (itemInput != null) {
+        itemInput.addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                console.log("Enter key pressed");
+                playerGuess();
+            }
+        });
+    }
 }
 
-setup();
+window.onload = function() {
+    console.log("Window loaded");
+
+    setup();
+}
     
-// Bind itemInput event to listen for the enter key
-// if (itemInput != null) {
-//     itemInput.addEventListener("keyup", function(event) {
-//         if (event.key === "Enter") {
-//             // Cancel the default action, if needed
-//             event.preventDefault();
-//             // Trigger the button element with a click
-//             //document.getElementById("itemButton").click();
-//             console.log("Enter key pressed");
-//         }
-//     });
-// }

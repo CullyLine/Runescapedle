@@ -1,12 +1,3 @@
-// Hint variables
-// Members only, true or false
-// High alch value, higher lower or equal
-// General store value
-// Weight, higher lower or equal
-// List of item categories
-// GE Buy_Limit
-// Item ID
-
 let currentItem : string = "";
 let currentItemData = {};
 let items : string[] = [];
@@ -117,8 +108,80 @@ async function fetchItemList() {
 // Player guessed incorrectly.
 // Grab the item info for this item, and compare values to the correct item.
 // Tell the player what they got right / wrong / partially right.
-async function incorrectGuess() {
-    let itemDataDictionary = await grabItemInfo(currentItem);
+async function incorrectGuess(guessedItem) {
+    let itemDataDictionary = await grabItemInfo(guessedItem);
+
+    // Compare members only
+    if (itemDataDictionary["Is_members_only"] == currentItemData["Is_members_only"]) {
+        console.log("Members only: Correct");
+    }
+    else {
+        console.log("Members only: Incorrect");
+    }
+
+    // Compare weight, check for above, equal, or below. Also, if weight is -1, state it's unknown.
+    if (itemDataDictionary["Weight"] == -1) {
+        console.log("Weight: Unknown");
+    }
+    else if (itemDataDictionary["Weight"] > currentItemData["Weight"]) {
+        console.log("Weight: Above");
+    }
+    else if (itemDataDictionary["Weight"] < currentItemData["Weight"]) {
+        console.log("Weight: Below");
+    }
+    else {
+        console.log("Weight: Correct");
+    }
+
+    // Compare high alch value, check for above, equal, or below. Also, if high alch value is -1, state it's unknown.
+    if (itemDataDictionary["High_Alchemy_value"] == -1) {
+        console.log("High alch value: Unknown");
+    }
+    else if (itemDataDictionary["High_Alchemy_value"] > currentItemData["High_Alchemy_value"]) {
+        console.log("High alch value: Above");
+    }
+    else if (itemDataDictionary["High_Alchemy_value"] < currentItemData["High_Alchemy_value"]) {
+        console.log("High alch value: Below");
+    }
+    else {
+        console.log("High alch value: Correct");
+    }
+
+    // Compare buy limit, check for above, equal, or below. Also, if buy limit is -1, state it's unknown.
+    if (itemDataDictionary["Buy_limit"] == -1) {
+        console.log("Buy limit: Unknown");
+    }
+    else if (itemDataDictionary["Buy_limit"] > currentItemData["Buy_limit"]) {
+        console.log("Buy limit: Above");
+    }
+    else if (itemDataDictionary["Buy_limit"] < currentItemData["Buy_limit"]) {
+        console.log("Buy limit: Below");
+    }
+    else {
+        console.log("Buy limit: Correct");
+    }
+
+    // Compare categories, if all are right, say correct, if all are wrong, say incorrect, if some are right, say partially correct.
+    let correctCategories = 0;
+    let incorrectCategories = 0;
+    itemDataDictionary["Categories"].forEach(category => {
+        if (currentItemData["Categories"].includes(category)) {
+            correctCategories++;
+        }
+        else {
+            incorrectCategories++;
+        }
+    });
+
+    if (correctCategories == itemDataDictionary["Categories"].length && correctCategories == currentItemData["Categories"].length) {
+        console.log("Categories: Correct");
+    }
+    else if (incorrectCategories == itemDataDictionary["Categories"].length && incorrectCategories == currentItemData["Categories"].length) {
+        console.log("Categories: Incorrect");
+    }
+    else {
+        console.log("Categories: Partially correct");
+    }
 
 
 }
@@ -144,7 +207,7 @@ function playerGuess() {
     }
     else {
         console.log("Incorrect!");
-        incorrectGuess();
+        incorrectGuess(guess);
     }
 
 }

@@ -111,6 +111,25 @@ async function fetchItemList() {
 async function incorrectGuess(guessedItem) {
     let itemDataDictionary = await grabItemInfo(guessedItem);
 
+    // Template example
+    // <div class="row" id="rowTemplate">
+    //     <div class="col">
+    //         Free to play / Members
+    //     </div>
+    //     <div class="col">
+    //         High Alch Value
+    //     </div>
+    //     <div class="col">
+    //         Weight
+    //     </div>
+    //     <div class="col">
+    //         G.E. Buy Limit
+    //     </div>
+    //     <div class="col">
+    //         Categories
+    //     </div>
+    // </div>
+
     // Compare members only
     if (itemDataDictionary["Is_members_only"] == currentItemData["Is_members_only"]) {
         console.log("Members only: Correct");

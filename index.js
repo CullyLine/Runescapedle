@@ -43,10 +43,98 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var currentItem = "";
+var currentItemData = {};
+var items = [];
+function grabItemInfo(item) {
+    return __awaiter(this, void 0, void 0, function () {
+        var itemDataQuery, headersList, response, data, itemDataObj, itemDataDictionary;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    itemDataQuery = "https://oldschool.runescape.wiki/w/Special:Browse?article=" + item + "&dir=both&group=show&offset=0&format=json";
+                    headersList = {
+                        "Accept": "*/*"
+                    };
+                    return [4 /*yield*/, fetch(itemDataQuery, {
+                            method: "GET",
+                            headers: headersList
+                        })];
+                case 1:
+                    response = _a.sent();
+                    return [4 /*yield*/, response.text()];
+                case 2:
+                    data = _a.sent();
+                    itemDataObj = JSON.parse(data);
+                    itemDataDictionary = {};
+                    Object.keys(itemDataObj["data"]).forEach(function (key) {
+                        var propertyName = itemDataObj["data"][key]["property"];
+                        var propertyValue = itemDataObj["data"][key]["dataitem"][0]["item"];
+                        // This property is an array of categories for this item.
+                        if (propertyName == "_INST") {
+                            //console.log(itemDataObj["data"][key]["dataitem"][0]["item"])
+                            var categories_1 = [];
+                            itemDataObj["data"][key]["dataitem"].forEach(function (category) {
+                                var categoryName = category["item"];
+                                categoryName = categoryName.replace(new RegExp("_", 'g'), " ").replace(new RegExp("#14##", 'g'), "");
+                                categories_1.push(categoryName);
+                            });
+                            itemDataDictionary["Categories"] = categories_1;
+                        }
+                        else {
+                            // This is a normal property.
+                            // Convert some values to more useful types.
+                            // True and False is given as "t" and "f" in the JSON.
+                            if (propertyValue == "t") {
+                                propertyValue = true;
+                            }
+                            else if (propertyValue == "f") {
+                                propertyValue = false;
+                            }
+                            // See if the value will parse as a number.
+                            else if (!isNaN(propertyValue)) {
+                                propertyValue = parseFloat(propertyValue);
+                            }
+                            itemDataDictionary[propertyName] = propertyValue;
+                        }
+                    });
+                    // Fix null values
+                    if (itemDataDictionary["High_Alchemy_value"] == null) {
+                        itemDataDictionary["High_Alchemy_value"] = -1;
+                    }
+                    if (itemDataDictionary["Is_members_only"] == null) {
+                        itemDataDictionary["Is_members_only"] = true;
+                    }
+                    if (itemDataDictionary["Weight"] == null) {
+                        itemDataDictionary["Weight"] = -1;
+                    }
+                    if (itemDataDictionary["Buy_limit"] == null) {
+                        itemDataDictionary["Buy_limit"] = -1;
+                    }
+                    return [2 /*return*/, itemDataDictionary];
+            }
+        });
+    });
+}
+function grabRandomItem() {
+    return __awaiter(this, void 0, void 0, function () {
+        var item, itemDataDictionary;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    item = items[Math.floor(Math.random() * items.length)];
+                    console.log(item);
+                    return [4 /*yield*/, grabItemInfo(item)];
+                case 1:
+                    itemDataDictionary = _a.sent();
+                    return [2 /*return*/, itemDataDictionary];
+            }
+        });
+    });
+}
 // Fetch JSON list of all OSRS items.
 function fetchItemList() {
     return __awaiter(this, void 0, void 0, function () {
-        var itemListQuery, headersList, response, data, itemsObj, items, item, itemDataQuery, itemDataObj, itemDataDictionary;
+        var itemListQuery, headersList, response, data, itemsObj;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -65,46 +153,22 @@ function fetchItemList() {
                     data = _a.sent();
                     itemsObj = JSON.parse(data);
                     items = Object.keys(itemsObj);
-                    item = items[Math.floor(Math.random() * items.length)];
-                    console.log(item);
-                    itemDataQuery = "https://oldschool.runescape.wiki/w/Special:Browse?article=" + item + "&dir=both&group=show&offset=0&format=json";
-                    headersList = {
-                        "Accept": "*/*"
-                    };
-                    return [4 /*yield*/, fetch(itemDataQuery, {
-                            method: "GET",
-                            headers: headersList
-                        })];
-                case 3:
-                    response = _a.sent();
-                    return [4 /*yield*/, response.text()];
-                case 4:
-                    data = _a.sent();
-                    itemDataObj = JSON.parse(data);
-                    itemDataDictionary = {};
-                    Object.keys(itemDataObj["data"]).forEach(function (key) {
-                        var propertyName = itemDataObj["data"][key]["property"];
-                        var propertyValue = itemDataObj["data"][key]["dataitem"][0]["item"];
-                        // Convert some values to more useful types.
-                        // True and False is given as "t" and "f" in the JSON.
-                        if (propertyValue == "t") {
-                            propertyValue = true;
-                        }
-                        else if (propertyValue == "f") {
-                            propertyValue = false;
-                        }
-                        // See if the value will parse as a number.
-                        else if (!isNaN(propertyValue)) {
-                            propertyValue = parseFloat(propertyValue);
-                        }
-                        itemDataDictionary[propertyName] = propertyValue;
-                    });
-                    // Fix null values
-                    if (itemDataDictionary["High_Alchemy_value"] == null) {
-                        itemDataDictionary["High_Alchemy_value"] = -1;
-                    }
-                    console.log(itemDataDictionary);
-                    currentItem = item;
+                    return [2 /*return*/, items];
+            }
+        });
+    });
+}
+// Player guessed incorrectly.
+// Grab the item info for this item, and compare values to the correct item.
+// Tell the player what they got right / wrong / partially right.
+function incorrectGuess() {
+    return __awaiter(this, void 0, void 0, function () {
+        var itemDataDictionary;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, grabItemInfo(currentItem)];
+                case 1:
+                    itemDataDictionary = _a.sent();
                     return [2 /*return*/];
             }
         });
@@ -118,33 +182,53 @@ function playerGuess() {
         return;
     }
     var guess = guessInput.value;
-    console.log(guess);
+    // Is this item in the items list?
+    if (!items.includes(guess)) {
+        console.log("Invalid item!");
+        return;
+    }
     // Compare the two
     if (guess == currentItem) {
         console.log("Correct!");
     }
     else {
         console.log("Incorrect!");
+        incorrectGuess();
     }
 }
 function setup() {
-    console.log("Setting up...");
-    // Fetch data from the OSRS Wiki
-    fetchItemList();
-    // Bind itemInput event to listen for the enter key
-    var itemInput = document.getElementById('itemInput');
-    if (itemInput != null) {
-        itemInput.addEventListener("keyup", function (event) {
-            if (event.key === "Enter") {
-                // Cancel the default action, if needed
-                event.preventDefault();
-                console.log("Enter key pressed");
-                playerGuess();
+    return __awaiter(this, void 0, void 0, function () {
+        var itemInput;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, fetchItemList()
+                    // Bind itemInput event to listen for the enter key
+                ];
+                case 1:
+                    // Fetch item list from the OSRS Wiki
+                    items = _a.sent();
+                    itemInput = document.getElementById('itemInput');
+                    if (itemInput != null) {
+                        itemInput.addEventListener("keyup", function (event) {
+                            if (event.key === "Enter") {
+                                // Cancel the default action, if needed
+                                event.preventDefault();
+                                console.log("Enter key pressed");
+                                playerGuess();
+                            }
+                        });
+                    }
+                    return [4 /*yield*/, grabRandomItem()];
+                case 2:
+                    // Get a random item's data.
+                    currentItemData = _a.sent();
+                    currentItem = currentItemData["_SKEY"];
+                    console.log(currentItem, currentItemData);
+                    return [2 /*return*/];
             }
         });
-    }
+    });
 }
 window.onload = function () {
-    console.log("Window loaded");
     setup();
 };

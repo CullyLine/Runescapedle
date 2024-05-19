@@ -8,6 +8,91 @@
 // Item ID
 
 let currentItem : string = "";
+let currentItemData = {};
+let items : string[] = [];
+
+async function grabItemInfo(item : string) {
+    let itemDataQuery = "https://oldschool.runescape.wiki/w/Special:Browse?article=" + item + "&dir=both&group=show&offset=0&format=json";
+    let headersList = {
+        "Accept": "*/*"
+    }
+    let response = await fetch(itemDataQuery, { 
+        method: "GET",
+        headers: headersList
+    });
+    let data = await response.text();
+
+    // Parse it and grab the info that we want.
+    // This is a bit of a mess, but it works.
+    // It's not my fault really, it's how the wiki's JSON is given to us.
+    let itemDataObj : object = JSON.parse(data);
+    let itemDataDictionary = {};
+    Object.keys(itemDataObj["data"]).forEach(key => {
+        let propertyName = itemDataObj["data"][key]["property"];
+        let propertyValue = itemDataObj["data"][key]["dataitem"][0]["item"]
+
+        // This property is an array of categories for this item.
+        if (propertyName == "_INST") {
+            //console.log(itemDataObj["data"][key]["dataitem"][0]["item"])
+            let categories : string[] = [];
+            itemDataObj["data"][key]["dataitem"].forEach(category => {
+                let categoryName : string = category["item"];
+                categoryName = categoryName.replace(new RegExp("_", 'g'), " ").replace(new RegExp("#14##", 'g'), "");
+                categories.push(categoryName);
+            });
+
+            itemDataDictionary["Categories"] = categories;
+        }
+        else 
+        {
+            // This is a normal property.
+            // Convert some values to more useful types.
+            // True and False is given as "t" and "f" in the JSON.
+            if (propertyValue == "t") {
+                propertyValue = true;
+            }
+            else if (propertyValue == "f") {  
+                propertyValue = false;
+            }
+            // See if the value will parse as a number.
+            else if (!isNaN(propertyValue)) {
+                propertyValue = parseFloat(propertyValue);
+            }
+
+            itemDataDictionary[propertyName] = propertyValue;
+        }
+    });
+
+    // Fix null values
+    if (itemDataDictionary["High_Alchemy_value"] == null) {
+        itemDataDictionary["High_Alchemy_value"] = -1;
+    }
+
+    if (itemDataDictionary["Is_members_only"] == null) {
+        itemDataDictionary["Is_members_only"] = true;
+    }
+
+    if (itemDataDictionary["Weight"] == null) {
+        itemDataDictionary["Weight"] = -1;
+    }
+
+    if (itemDataDictionary["Buy_limit"] == null) {
+        itemDataDictionary["Buy_limit"] = -1;
+    }
+
+    return itemDataDictionary;
+}
+
+async function grabRandomItem() {
+    // Select a random item from the list
+    var item : string = items[Math.floor(Math.random()*items.length)];
+    console.log(item);
+
+    // Fetch the item's info JSON
+    let itemDataDictionary = await grabItemInfo(item);
+
+    return itemDataDictionary;
+}
 
 // Fetch JSON list of all OSRS items.
 async function fetchItemList() {
@@ -24,60 +109,18 @@ async function fetchItemList() {
     
     // Parse the JSON into an object, and then a string array of the items.
     let itemsObj : object = JSON.parse(data);
-    let items : string[] = Object.keys(itemsObj);
-    
-    // Select a random item from the list
-    var item : string = items[Math.floor(Math.random()*items.length)];
-    console.log(item);
+    items = Object.keys(itemsObj);
 
-    // Fetch the item's info JSON
-    let itemDataQuery = "https://oldschool.runescape.wiki/w/Special:Browse?article=" + item + "&dir=both&group=show&offset=0&format=json";
-    headersList = {
-        "Accept": "*/*"
-    }
-    response = await fetch(itemDataQuery, { 
-        method: "GET",
-        headers: headersList
-    });
-    data = await response.text();
-
-    // Parse it and grab the info that we want.
-    // This is a bit of a mess, but it works.
-    // It's not my fault really, it's how the wiki's JSON is given to us.
-    let itemDataObj : object = JSON.parse(data);
-    let itemDataDictionary = {};
-    Object.keys(itemDataObj["data"]).forEach(key => {
-        let propertyName = itemDataObj["data"][key]["property"];
-        let propertyValue = itemDataObj["data"][key]["dataitem"][0]["item"]
-
-        // Convert some values to more useful types.
-        // True and False is given as "t" and "f" in the JSON.
-        if (propertyValue == "t") {
-            propertyValue = true;
-        }
-        else if (propertyValue == "f") {  
-            propertyValue = false;
-        }
-        // See if the value will parse as a number.
-        else if (!isNaN(propertyValue)) {
-            propertyValue = parseFloat(propertyValue);
-        }
-
-        itemDataDictionary[propertyName] = propertyValue;
-    });
-
-    // Fix null values
-    if (itemDataDictionary["High_Alchemy_value"] == null) {
-        itemDataDictionary["High_Alchemy_value"] = -1;
-    }
-
-    console.log(itemDataDictionary);
-
-    currentItem = item;
+    return items;
 }
 
-function incorrectGuess() {
-    
+// Player guessed incorrectly.
+// Grab the item info for this item, and compare values to the correct item.
+// Tell the player what they got right / wrong / partially right.
+async function incorrectGuess() {
+    let itemDataDictionary = await grabItemInfo(currentItem);
+
+
 }
 
 function playerGuess() {
@@ -88,6 +131,12 @@ function playerGuess() {
         return;
     }
     let guess = guessInput.value;
+
+    // Is this item in the items list?
+    if (!items.includes(guess)) {
+        console.log("Invalid item!");
+        return;
+    }
 
     // Compare the two
     if (guess == currentItem) {
@@ -100,9 +149,9 @@ function playerGuess() {
 
 }
 
-function setup() {
-    // Fetch data from the OSRS Wiki
-    fetchItemList()
+async function setup() {
+    // Fetch item list from the OSRS Wiki
+    items = await fetchItemList()
 
     // Bind itemInput event to listen for the enter key
     let itemInput = document.getElementById('itemInput');
@@ -116,11 +165,15 @@ function setup() {
             }
         });
     }
+
+    // Get a random item's data.
+    currentItemData = await grabRandomItem();
+    currentItem = currentItemData["_SKEY"];
+
+    console.log(currentItem, currentItemData);
 }
 
 window.onload = function() {
-    console.log("Window loaded");
-
     setup();
 }
     

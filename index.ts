@@ -314,8 +314,8 @@ async function setup() {
                     itemLink.href = "#";
                     itemLink.className = "dropdown-item";
                     itemLink.onclick = function() {
-                        playerGuess();
                         itemInput.value = item;
+                        playerGuess();
                     }
                     itemLink.innerText = item;
                     listItem.appendChild(itemLink);

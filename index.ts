@@ -134,38 +134,53 @@ async function incorrectGuess(guessedItem) {
     let rowHTML = "<div class=\"row\">";
 
     // Compare members only
-    rowHTML += "\r\n    <div class=\"col ";
+    rowHTML += "<div class=\"col";
     // Color
     if (itemDataDictionary["Is_members_only"] == currentItemData["Is_members_only"]) {
         console.log("Members only: Correct");
-        rowHTML += "bg-success\">";
+        rowHTML += " bg-success\">";
     }
     else {
         console.log("Members only: Incorrect");
-        rowHTML += "bg-danger\">";
+        rowHTML += " bg-danger\">";
     }
     // Text
     if (itemDataDictionary["Is_members_only"] == true) {
-        rowHTML += "\r\n        Members";
+        rowHTML += " Members";
     }
     else {
-        rowHTML += "\r\n        Free to play";
+        rowHTML += " Free to play";
     }
-    rowHTML += "\r\n    </div>";
+    rowHTML += " </div>";
     
     // Compare weight, check for above, equal, or below. Also, if weight is -1, state it's unknown.
+    rowHTML += "<div class=\"col";
     if (itemDataDictionary["Weight"] == -1) {
-        console.log("Weight: Unknown");
+        // If the player's guess can't get the weight, but the correct item can, show the correct weight and mark it as correct.
+        if (currentItemData["Weight"] > -1) {
+            console.log("Weight: Unknown");
+            rowHTML += " bg-success\"> " + currentItemData["Weight"];
+        } 
+        else
+        {
+            // If both the player's guess and the correct item can't get the weight, mark it as unknown.
+            console.log("Weight: Unknown");
+            rowHTML += " bg-success\"> ?";
+        }
     }
     else if (itemDataDictionary["Weight"] > currentItemData["Weight"]) {
         console.log("Weight: Above");
+        rowHTML += " bg-warning\"> v " + itemDataDictionary["Weight"];
     }
     else if (itemDataDictionary["Weight"] < currentItemData["Weight"]) {
         console.log("Weight: Below");
+        rowHTML += " bg-warning\"> ^ " + itemDataDictionary["Weight"];
     }
     else {
         console.log("Weight: Correct");
+        rowHTML += " bg-success\"> " + itemDataDictionary["Weight"];
     }
+    rowHTML += " </div>";
 
     // Compare high alch value, check for above, equal, or below. Also, if high alch value is -1, state it's unknown.
     if (itemDataDictionary["High_Alchemy_value"] == -1) {
@@ -220,7 +235,7 @@ async function incorrectGuess(guessedItem) {
     rowHTML += "</div>";
 
     // Append the row to the table
-    let table = document.getElementById("comparisonTable");
+    let table = document.getElementById("infoTable");
     if (table == null) {
         return;
     }

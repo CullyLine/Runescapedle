@@ -130,14 +130,29 @@ async function incorrectGuess(guessedItem) {
     //     </div>
     // </div>
 
+    // Build the row
+    let rowHTML = "<div class=\"row\">";
+
     // Compare members only
+    rowHTML += "\r\n    <div class=\"col ";
+    // Color
     if (itemDataDictionary["Is_members_only"] == currentItemData["Is_members_only"]) {
         console.log("Members only: Correct");
+        rowHTML += "bg-success\">";
     }
     else {
         console.log("Members only: Incorrect");
+        rowHTML += "bg-danger\">";
     }
-
+    // Text
+    if (itemDataDictionary["Is_members_only"] == true) {
+        rowHTML += "\r\n        Members";
+    }
+    else {
+        rowHTML += "\r\n        Free to play";
+    }
+    rowHTML += "\r\n    </div>";
+    
     // Compare weight, check for above, equal, or below. Also, if weight is -1, state it's unknown.
     if (itemDataDictionary["Weight"] == -1) {
         console.log("Weight: Unknown");
@@ -202,7 +217,15 @@ async function incorrectGuess(guessedItem) {
         console.log("Categories: Partially correct");
     }
 
+    rowHTML += "</div>";
 
+    // Append the row to the table
+    let table = document.getElementById("comparisonTable");
+    if (table == null) {
+        return;
+    }
+
+    table.innerHTML += rowHTML;
 }
 
 function playerGuess() {

@@ -167,11 +167,11 @@ function incorrectGuess(guessedItem) {
                     // Color
                     if (itemDataDictionary["Is_members_only"] == currentItemData["Is_members_only"]) {
                         console.log("Members only: Correct");
-                        rowHTML += " bg-success\">";
+                        rowHTML += " bg-success bg-gradient\">";
                     }
                     else {
                         console.log("Members only: Incorrect");
-                        rowHTML += " bg-danger\">";
+                        rowHTML += " bg-danger bg-gradient\">";
                     }
                     // Text
                     if (itemDataDictionary["Is_members_only"] == true) {
@@ -181,59 +181,90 @@ function incorrectGuess(guessedItem) {
                         rowHTML += " Free to play";
                     }
                     rowHTML += " </div>";
+                    // Compare high alch value, check for above, equal, or below. Also, if high alch value is -1, state it's unknown.
+                    rowHTML += "<div class=\"col";
+                    if (itemDataDictionary["High_Alchemy_value"] == -1) {
+                        // If the player's guess can't get the high alch value, but the correct item can, show the correct high alch value and mark it as correct.
+                        if (currentItemData["High_Alchemy_value"] > -1) {
+                            console.log("High alch value: Unknown");
+                            rowHTML += " bg-success bg-gradient\"> " + currentItemData["High_Alchemy_value"];
+                        }
+                        else {
+                            // If both the player's guess and the correct item can't get the high alch value, mark it as unknown.
+                            console.log("High alch value: Unknown");
+                            rowHTML += " bg-success bg-gradient\"> ?";
+                        }
+                    }
+                    else if (itemDataDictionary["High_Alchemy_value"] > currentItemData["High_Alchemy_value"]) {
+                        console.log("High alch value: Above");
+                        rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["High_Alchemy_value"];
+                    }
+                    else if (itemDataDictionary["High_Alchemy_value"] < currentItemData["High_Alchemy_value"]) {
+                        console.log("High alch value: Below");
+                        rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["High_Alchemy_value"];
+                    }
+                    else {
+                        rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["High_Alchemy_value"];
+                        console.log("High alch value: Correct");
+                    }
+                    rowHTML += " </div>";
                     // Compare weight, check for above, equal, or below. Also, if weight is -1, state it's unknown.
                     rowHTML += "<div class=\"col";
                     if (itemDataDictionary["Weight"] == -1) {
                         // If the player's guess can't get the weight, but the correct item can, show the correct weight and mark it as correct.
                         if (currentItemData["Weight"] > -1) {
                             console.log("Weight: Unknown");
-                            rowHTML += " bg-success\"> " + currentItemData["Weight"];
+                            rowHTML += " bg-success bg-gradient\"> " + currentItemData["Weight"];
                         }
                         else {
                             // If both the player's guess and the correct item can't get the weight, mark it as unknown.
                             console.log("Weight: Unknown");
-                            rowHTML += " bg-success\"> ?";
+                            rowHTML += " bg-success bg-gradient\"> ?";
                         }
                     }
                     else if (itemDataDictionary["Weight"] > currentItemData["Weight"]) {
                         console.log("Weight: Above");
-                        rowHTML += " bg-warning\"> v" + itemDataDictionary["Weight"];
+                        rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["Weight"];
                     }
                     else if (itemDataDictionary["Weight"] < currentItemData["Weight"]) {
                         console.log("Weight: Below");
-                        rowHTML += " bg-warning\"> ^" + itemDataDictionary["Weight"];
+                        rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["Weight"];
                     }
                     else {
                         console.log("Weight: Correct");
-                        rowHTML += " bg-success\"> " + itemDataDictionary["Weight"];
+                        rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["Weight"];
                     }
                     rowHTML += " </div>";
-                    // Compare high alch value, check for above, equal, or below. Also, if high alch value is -1, state it's unknown.
-                    if (itemDataDictionary["High_Alchemy_value"] == -1) {
-                        console.log("High alch value: Unknown");
-                    }
-                    else if (itemDataDictionary["High_Alchemy_value"] > currentItemData["High_Alchemy_value"]) {
-                        console.log("High alch value: Above");
-                    }
-                    else if (itemDataDictionary["High_Alchemy_value"] < currentItemData["High_Alchemy_value"]) {
-                        console.log("High alch value: Below");
-                    }
-                    else {
-                        console.log("High alch value: Correct");
-                    }
                     // Compare buy limit, check for above, equal, or below. Also, if buy limit is -1, state it's unknown.
+                    rowHTML += "<div class=\"col";
                     if (itemDataDictionary["Buy_limit"] == -1) {
+                        // If the player's guess can't get the buy limit, but the correct item can, show the correct buy limit and mark it as correct.
+                        if (currentItemData["Buy_limit"] > -1) {
+                            console.log("Buy limit: Unknown");
+                            rowHTML += " bg-success bg-gradient\"> " + currentItemData["Buy_limit"];
+                        }
+                        else {
+                            // If both the player's guess and the correct item can't get the buy limit, mark it as unknown.
+                            console.log("Buy limit: Unknown");
+                            rowHTML += " bg-success bg-gradient\"> ?";
+                        }
                         console.log("Buy limit: Unknown");
                     }
                     else if (itemDataDictionary["Buy_limit"] > currentItemData["Buy_limit"]) {
+                        rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["Buy_limit"];
                         console.log("Buy limit: Above");
                     }
                     else if (itemDataDictionary["Buy_limit"] < currentItemData["Buy_limit"]) {
+                        rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["Buy_limit"];
                         console.log("Buy limit: Below");
                     }
                     else {
+                        rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["Buy_limit"];
                         console.log("Buy limit: Correct");
                     }
+                    rowHTML += " </div>";
+                    // Compare categories, if all are right, say correct, if all are wrong, say incorrect, if some are right, say partially correct.
+                    rowHTML += "<div class=\"col bg-warning bg-gradient\">";
                     correctCategories = 0;
                     incorrectCategories = 0;
                     itemDataDictionary["Categories"].forEach(function (category) {
@@ -253,7 +284,8 @@ function incorrectGuess(guessedItem) {
                     else {
                         console.log("Categories: Partially correct");
                     }
-                    rowHTML += "</div>";
+                    rowHTML += " </div>";
+                    rowHTML += " </div>";
                     table = document.getElementById("infoTable");
                     if (table == null) {
                         return [2 /*return*/];

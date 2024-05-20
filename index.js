@@ -332,8 +332,42 @@ function setup() {
                     itemInput = document.getElementById('itemInput');
                     if (itemInput != null) {
                         itemInput.addEventListener("keyup", function (event) {
+                            // Clear any old entries in the dropdown list
+                            var dropdownList = document.getElementById("itemDropdownList");
+                            if (dropdownList != null) {
+                                dropdownList.innerHTML = "";
+                            }
+                            var newValue = itemInput.value;
+                            if (newValue != "" && newValue != null && newValue.length >= 3) {
+                                dropdownList.hidden = false;
+                                // Find items that match the new value
+                                var matchingItems = items.filter(function (item) { return item.toLowerCase().includes(newValue.toLowerCase()); });
+                                if (matchingItems.length == 0) {
+                                    dropdownList.hidden = true;
+                                }
+                                // Add the matching items to the dropdown list,
+                                // each item should be an <li> element with an <a> element inside it.
+                                // each <a> element should have an onclick event that sets the itemInput's value to the item.
+                                // each <a> element should have an href of "#".
+                                // each <a> element should have a class of "dropdown-item".
+                                matchingItems.forEach(function (item) {
+                                    var listItem = document.createElement("li");
+                                    var itemLink = document.createElement("a");
+                                    itemLink.href = "#";
+                                    itemLink.className = "dropdown-item";
+                                    itemLink.onclick = function () {
+                                        playerGuess();
+                                        itemInput.value = item;
+                                    };
+                                    itemLink.innerText = item;
+                                    listItem.appendChild(itemLink);
+                                    dropdownList.appendChild(listItem);
+                                });
+                            }
+                            else {
+                                dropdownList.hidden = true;
+                            }
                             if (event.key === "Enter") {
-                                // Cancel the default action, if needed
                                 event.preventDefault();
                                 console.log("Enter key pressed");
                                 playerGuess();

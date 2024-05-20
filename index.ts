@@ -24,7 +24,6 @@ async function grabItemInfo(item : string) {
 
         // This property is an array of categories for this item.
         if (propertyName == "_INST") {
-            //console.log(itemDataObj["data"][key]["dataitem"][0]["item"])
             let categories : string[] = [];
             itemDataObj["data"][key]["dataitem"].forEach(category => {
                 let categoryName : string = category["item"];
@@ -77,7 +76,6 @@ async function grabItemInfo(item : string) {
 async function grabRandomItem() {
     // Select a random item from the list
     var item : string = items[Math.floor(Math.random()*items.length)];
-    console.log(item);
 
     // Fetch the item's info JSON
     let itemDataDictionary = await grabItemInfo(item);
@@ -137,11 +135,10 @@ async function incorrectGuess(guessedItem) {
     rowHTML += "<div class=\"col";
     // Color
     if (itemDataDictionary["Is_members_only"] == currentItemData["Is_members_only"]) {
-        console.log("Members only: Correct");
         rowHTML += " bg-success bg-gradient\">";
     }
     else {
-        console.log("Members only: Incorrect");
+
         rowHTML += " bg-danger bg-gradient\">";
     }
     // Text
@@ -158,27 +155,22 @@ async function incorrectGuess(guessedItem) {
     if (itemDataDictionary["High_Alchemy_value"] == -1) {
         // If the player's guess can't get the high alch value, but the correct item can, show the correct high alch value and mark it as correct.
         if (currentItemData["High_Alchemy_value"] > -1) {
-            console.log("High alch value: Unknown");
             rowHTML += " bg-success bg-gradient\"> " + currentItemData["High_Alchemy_value"];
         } 
         else
         {
             // If both the player's guess and the correct item can't get the high alch value, mark it as unknown.
-            console.log("High alch value: Unknown");
             rowHTML += " bg-success bg-gradient\"> ?";
         }
     }
     else if (itemDataDictionary["High_Alchemy_value"] > currentItemData["High_Alchemy_value"]) {
-        console.log("High alch value: Above");
         rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["High_Alchemy_value"];
     }
     else if (itemDataDictionary["High_Alchemy_value"] < currentItemData["High_Alchemy_value"]) {
-        console.log("High alch value: Below");
         rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["High_Alchemy_value"];
     }
     else {
         rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["High_Alchemy_value"];
-        console.log("High alch value: Correct");
     }
     rowHTML += " </div>";
     
@@ -187,26 +179,21 @@ async function incorrectGuess(guessedItem) {
     if (itemDataDictionary["Weight"] == -1) {
         // If the player's guess can't get the weight, but the correct item can, show the correct weight and mark it as correct.
         if (currentItemData["Weight"] > -1) {
-            console.log("Weight: Unknown");
             rowHTML += " bg-success bg-gradient\"> " + currentItemData["Weight"];
         } 
         else
         {
             // If both the player's guess and the correct item can't get the weight, mark it as unknown.
-            console.log("Weight: Unknown");
             rowHTML += " bg-success bg-gradient\"> ?";
         }
     }
     else if (itemDataDictionary["Weight"] > currentItemData["Weight"]) {
-        console.log("Weight: Above");
         rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["Weight"];
     }
     else if (itemDataDictionary["Weight"] < currentItemData["Weight"]) {
-        console.log("Weight: Below");
         rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["Weight"];
     }
     else {
-        console.log("Weight: Correct");
         rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["Weight"];
     }
     rowHTML += " </div>";
@@ -216,28 +203,22 @@ async function incorrectGuess(guessedItem) {
     if (itemDataDictionary["Buy_limit"] == -1) {
         // If the player's guess can't get the buy limit, but the correct item can, show the correct buy limit and mark it as correct.
         if (currentItemData["Buy_limit"] > -1) {
-            console.log("Buy limit: Unknown");
             rowHTML += " bg-success bg-gradient\"> " + currentItemData["Buy_limit"];
         } 
         else
         {
             // If both the player's guess and the correct item can't get the buy limit, mark it as unknown.
-            console.log("Buy limit: Unknown");
             rowHTML += " bg-success bg-gradient\"> ?";
         }
-        console.log("Buy limit: Unknown");
     }
     else if (itemDataDictionary["Buy_limit"] > currentItemData["Buy_limit"]) {
         rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["Buy_limit"];
-        console.log("Buy limit: Above");
     }
     else if (itemDataDictionary["Buy_limit"] < currentItemData["Buy_limit"]) {
         rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["Buy_limit"];
-        console.log("Buy limit: Below");
     }
     else {
         rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["Buy_limit"];
-        console.log("Buy limit: Correct");
     }
     rowHTML += " </div>";
 
@@ -255,13 +236,11 @@ async function incorrectGuess(guessedItem) {
     });
 
     if (correctCategories == itemDataDictionary["Categories"].length && correctCategories == currentItemData["Categories"].length) {
-        console.log("Categories: Correct");
     }
     else if (incorrectCategories == itemDataDictionary["Categories"].length && incorrectCategories == currentItemData["Categories"].length) {
-        console.log("Categories: Incorrect");
     }
     else {
-        console.log("Categories: Partially correct");
+
     }
     rowHTML += " </div>";
 
@@ -280,23 +259,19 @@ function playerGuess() {
     // Get the player's guess
     let guessInput : HTMLInputElement = <HTMLInputElement>document.getElementById("itemInput");
     if (guessInput == null) {
-        console.log("Guess input not found");
         return;
     }
     let guess = guessInput.value;
 
     // Is this item in the items list?
     if (!items.includes(guess)) {
-        console.log("Invalid item!");
         return;
     }
 
     // Compare the two
     if (guess == currentItem) {
-        console.log("Correct!");
     }
     else {
-        console.log("Incorrect!");
         incorrectGuess(guess);
     }
 
@@ -307,13 +282,54 @@ async function setup() {
     items = await fetchItemList()
 
     // Bind itemInput event to listen for the enter key
-    let itemInput = document.getElementById('itemInput');
+    let itemInput : HTMLInputElement = <HTMLInputElement>document.getElementById('itemInput');
     if (itemInput != null) {
         itemInput.addEventListener("keyup", function(event) {
+            // Clear any old entries in the dropdown list
+            let dropdownList : HTMLInputElement  = <HTMLInputElement>document.getElementById("itemDropdownList");
+            if (dropdownList != null) {
+                dropdownList.innerHTML = "";
+            }
+
+            let newValue = itemInput.value;
+
+            if (newValue != "" && newValue != null && newValue.length >= 3) {
+                dropdownList.hidden = false
+
+                // Find items that match the new value
+                let matchingItems = items.filter(item => item.toLowerCase().includes(newValue.toLowerCase()));
+
+                if (matchingItems.length == 0) { 
+                    dropdownList.hidden = true
+                }
+
+                // Add the matching items to the dropdown list,
+                // each item should be an <li> element with an <a> element inside it.
+                // each <a> element should have an onclick event that sets the itemInput's value to the item.
+                // each <a> element should have an href of "#".
+                // each <a> element should have a class of "dropdown-item".
+                matchingItems.forEach(item => {
+                    let listItem = document.createElement("li");
+                    let itemLink = document.createElement("a");
+                    itemLink.href = "#";
+                    itemLink.className = "dropdown-item";
+                    itemLink.onclick = function() {
+                        playerGuess();
+                        itemInput.value = item;
+                    }
+                    itemLink.innerText = item;
+                    listItem.appendChild(itemLink);
+
+                    dropdownList.appendChild(listItem);
+                });
+            }
+            else 
+            {
+                dropdownList.hidden = true
+            }
+
             if (event.key === "Enter") {
-                // Cancel the default action, if needed
                 event.preventDefault();
-                console.log("Enter key pressed");
                 playerGuess();
             }
         });

@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" 
+    <!-- <meta http-equiv="Content-Security-Policy" 
       content="base-uri 'self';
       default-src 'self';
       connect-src * ws: http: https: 'self';
@@ -12,10 +11,18 @@
       object-src 'none';
       script-src 'self' 'unsafe-inline';
       style-src 'self' 'unsafe-inline';
-      upgrade-insecure-requests;">
+    upgrade-insecure-requests;"> -->
     <!-- content="default-src 'self'; script-src 'self'"> -->
+
     <title>Runescapedle!</title>
-    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <style>
+    /* Style the input field */
+    /* #itemInput {
+      
+    } */
+    </style>
 
     <!-- Load the index.js file -->
     <script src="index.js"></script>
@@ -88,13 +95,34 @@
         </div>
     </section>
 
-    <section class="text-center pt-2 pb-2">
+    <section class="text-center pt-2 pb-2 pr-2 pl-2">
         <div class="container">
             <div class="row">
-                <input id="itemInput" class="form-control form-control-lg" type="text" placeholder="Bucket">
+                <div class="dropdown">
+                  <input id="itemInput" class="form-control form-control-lg" type="text" placeholder="Bucket" data-bs-toggle="dropdown">
+                  <ul class="dropdown-menu" style="overflow-y:auto; max-height:200px; width:100%">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  </ul>
+                </div>
             </div>
         </div>
-
     </section>
 
     <section class="text-center pt-2 pb-2">
@@ -118,5 +146,7 @@
         </div>
       </div>
     </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

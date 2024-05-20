@@ -63,7 +63,6 @@ function grabItemInfo(item) {
                         var propertyValue = itemDataObj["data"][key]["dataitem"][0]["item"];
                         // This property is an array of categories for this item.
                         if (propertyName == "_INST") {
-                            //console.log(itemDataObj["data"][key]["dataitem"][0]["item"])
                             var categories_1 = [];
                             itemDataObj["data"][key]["dataitem"].forEach(function (category) {
                                 var categoryName = category["item"];
@@ -114,7 +113,6 @@ function grabRandomItem() {
             switch (_a.label) {
                 case 0:
                     item = items[Math.floor(Math.random() * items.length)];
-                    console.log(item);
                     return [4 /*yield*/, grabItemInfo(item)];
                 case 1:
                     itemDataDictionary = _a.sent();
@@ -166,11 +164,9 @@ function incorrectGuess(guessedItem) {
                     rowHTML += "<div class=\"col";
                     // Color
                     if (itemDataDictionary["Is_members_only"] == currentItemData["Is_members_only"]) {
-                        console.log("Members only: Correct");
                         rowHTML += " bg-success bg-gradient\">";
                     }
                     else {
-                        console.log("Members only: Incorrect");
                         rowHTML += " bg-danger bg-gradient\">";
                     }
                     // Text
@@ -186,26 +182,21 @@ function incorrectGuess(guessedItem) {
                     if (itemDataDictionary["High_Alchemy_value"] == -1) {
                         // If the player's guess can't get the high alch value, but the correct item can, show the correct high alch value and mark it as correct.
                         if (currentItemData["High_Alchemy_value"] > -1) {
-                            console.log("High alch value: Unknown");
                             rowHTML += " bg-success bg-gradient\"> " + currentItemData["High_Alchemy_value"];
                         }
                         else {
                             // If both the player's guess and the correct item can't get the high alch value, mark it as unknown.
-                            console.log("High alch value: Unknown");
                             rowHTML += " bg-success bg-gradient\"> ?";
                         }
                     }
                     else if (itemDataDictionary["High_Alchemy_value"] > currentItemData["High_Alchemy_value"]) {
-                        console.log("High alch value: Above");
                         rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["High_Alchemy_value"];
                     }
                     else if (itemDataDictionary["High_Alchemy_value"] < currentItemData["High_Alchemy_value"]) {
-                        console.log("High alch value: Below");
                         rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["High_Alchemy_value"];
                     }
                     else {
                         rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["High_Alchemy_value"];
-                        console.log("High alch value: Correct");
                     }
                     rowHTML += " </div>";
                     // Compare weight, check for above, equal, or below. Also, if weight is -1, state it's unknown.
@@ -213,25 +204,20 @@ function incorrectGuess(guessedItem) {
                     if (itemDataDictionary["Weight"] == -1) {
                         // If the player's guess can't get the weight, but the correct item can, show the correct weight and mark it as correct.
                         if (currentItemData["Weight"] > -1) {
-                            console.log("Weight: Unknown");
                             rowHTML += " bg-success bg-gradient\"> " + currentItemData["Weight"];
                         }
                         else {
                             // If both the player's guess and the correct item can't get the weight, mark it as unknown.
-                            console.log("Weight: Unknown");
                             rowHTML += " bg-success bg-gradient\"> ?";
                         }
                     }
                     else if (itemDataDictionary["Weight"] > currentItemData["Weight"]) {
-                        console.log("Weight: Above");
                         rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["Weight"];
                     }
                     else if (itemDataDictionary["Weight"] < currentItemData["Weight"]) {
-                        console.log("Weight: Below");
                         rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["Weight"];
                     }
                     else {
-                        console.log("Weight: Correct");
                         rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["Weight"];
                     }
                     rowHTML += " </div>";
@@ -240,27 +226,21 @@ function incorrectGuess(guessedItem) {
                     if (itemDataDictionary["Buy_limit"] == -1) {
                         // If the player's guess can't get the buy limit, but the correct item can, show the correct buy limit and mark it as correct.
                         if (currentItemData["Buy_limit"] > -1) {
-                            console.log("Buy limit: Unknown");
                             rowHTML += " bg-success bg-gradient\"> " + currentItemData["Buy_limit"];
                         }
                         else {
                             // If both the player's guess and the correct item can't get the buy limit, mark it as unknown.
-                            console.log("Buy limit: Unknown");
                             rowHTML += " bg-success bg-gradient\"> ?";
                         }
-                        console.log("Buy limit: Unknown");
                     }
                     else if (itemDataDictionary["Buy_limit"] > currentItemData["Buy_limit"]) {
                         rowHTML += " bg-warning bg-gradient\"> v " + itemDataDictionary["Buy_limit"];
-                        console.log("Buy limit: Above");
                     }
                     else if (itemDataDictionary["Buy_limit"] < currentItemData["Buy_limit"]) {
                         rowHTML += " bg-warning bg-gradient\"> ^ " + itemDataDictionary["Buy_limit"];
-                        console.log("Buy limit: Below");
                     }
                     else {
                         rowHTML += " bg-success bg-gradient\"> " + itemDataDictionary["Buy_limit"];
-                        console.log("Buy limit: Correct");
                     }
                     rowHTML += " </div>";
                     // Compare categories, if all are right, say correct, if all are wrong, say incorrect, if some are right, say partially correct.
@@ -276,13 +256,10 @@ function incorrectGuess(guessedItem) {
                         }
                     });
                     if (correctCategories == itemDataDictionary["Categories"].length && correctCategories == currentItemData["Categories"].length) {
-                        console.log("Categories: Correct");
                     }
                     else if (incorrectCategories == itemDataDictionary["Categories"].length && incorrectCategories == currentItemData["Categories"].length) {
-                        console.log("Categories: Incorrect");
                     }
                     else {
-                        console.log("Categories: Partially correct");
                     }
                     rowHTML += " </div>";
                     rowHTML += " </div>";
@@ -300,21 +277,17 @@ function playerGuess() {
     // Get the player's guess
     var guessInput = document.getElementById("itemInput");
     if (guessInput == null) {
-        console.log("Guess input not found");
         return;
     }
     var guess = guessInput.value;
     // Is this item in the items list?
     if (!items.includes(guess)) {
-        console.log("Invalid item!");
         return;
     }
     // Compare the two
     if (guess == currentItem) {
-        console.log("Correct!");
     }
     else {
-        console.log("Incorrect!");
         incorrectGuess(guess);
     }
 }
@@ -369,7 +342,6 @@ function setup() {
                             }
                             if (event.key === "Enter") {
                                 event.preventDefault();
-                                console.log("Enter key pressed");
                                 playerGuess();
                             }
                         });
